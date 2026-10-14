@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>NYKISS Gram</title>
+
+  <!-- iOS PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="NYKISS Gram">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <!-- Android PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0a0a0a">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #0a0a0a;
+      color: #fff;
+      font-family: -apple-system, 'SF Pro Display', sans-serif;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .splash {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      animation: fadeIn 0.4s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .logo {
+      width: 88px;
+      height: 88px;
+      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+      border-radius: 22px;
+      border: 1.5px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 40px rgba(255,215,0,0.15);
+    }
+
+    .logo svg { width: 48px; height: 48px; }
+
+    .name {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #FFD700;
+      text-shadow: 0 0 30px rgba(255,215,0,0.3);
+    }
+
+    .sub {
+      font-size: 13px;
+      color: #555;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .loader {
+      width: 36px;
+      height: 2px;
+      background: #222;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .loader-bar {
+      height: 100%;
+      background: #FFD700;
+      border-radius: 2px;
+      animation: load 1.8s ease forwards;
+    }
+
+    @keyframes load {
+      from { width: 0%; }
+      to   { width: 100%; }
+    }
+
+    /* Bottom install hint */
+    .hint {
+      position: fixed;
+      bottom: max(24px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-size: 13px;
+      color: #888;
+      text-align: center;
+      white-space: nowrap;
+      animation: fadeIn 0.5s ease 0.3s both;
+      display: none;
+    }
+
+    .hint.show { display: block; }
+    .hint span { color: #FFD700; }
+  </style>
+</head>
+<body>
+  <div class="splash">
+    <div class="logo">
+      <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- N letter stylized -->
+        <path d="M10 38V10L24 30V10M24 30L38 10V38" stroke="#FFD700" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Ghost eye dots -->
+        <circle cx="19" cy="20" r="1.5" fill="#FFD700" opacity="0.6"/>
+        <circle cx="29" cy="20" r="1.5" fill="#FFD700" opacity="0.6"/>
+      </svg>
+    </div>
+    <div class="name">NYKISS</div>
+    <div class="sub">Gram</div>
+    <div class="loader"><div class="loader-bar"></div></div>
+  </div>
+
+  <div class="hint" id="hint">
+    Нажми <span>Поделиться →</span> «На экран Домой»
+  </div>
+
+  <script>
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js');
+    }
+
+    // Detect if running as standalone (installed PWA)
+    const isStandalone = window.navigator.standalone
+      || window.matchMedia('(display-mode: standalone)').matches;
+
+    // Show install hint if on iOS Safari but not installed
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isSafari = /safari/i.test(navigator.userAgent) && !/chrome/i.test(navigator.userAgent);
+
+    if (isIOS && isSafari && !isStandalone) {
+      document.getElementById('hint').classList.add('show');
+    }
+
+    // Redirect after splash
+    setTimeout(() => {
+      window.location.href = 'https://web.telegram.org/k/';
+    }, 1900);
+  </script>
+</body>
+</html>
